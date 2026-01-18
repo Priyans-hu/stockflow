@@ -1,20 +1,24 @@
 import React from 'react';
 
-const OrderCard = ({ order, onDelete }) => {
-    const handleDelete = () => {
-        onDelete(order.id); // Call the onDelete function passed from parent component
+const TransactionCard = ({ transaction }) => {
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleDateString();
     };
 
     return (
         <div className="bg-white p-6 rounded shadow-md">
-            <h2 className="text-xl font-semibold mb-2">Order #{order.id}</h2>
-            <p className="text-gray-600">Total Items: {order.totalItems}</p>
-            <p className="text-gray-600">Total Amount: ${order.totalAmount}</p>
-            <button onClick={handleDelete} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-2">
-                Delete
-            </button>
+            <h2 className="text-xl font-semibold mb-2">
+                Transaction #{transaction._id?.slice(-6) || 'N/A'}
+            </h2>
+            <p className="text-gray-600">Type: {transaction.type || 'N/A'}</p>
+            <p className="text-gray-600">Amount: ${transaction.amount?.toFixed(2) || '0.00'}</p>
+            <p className="text-gray-600">Date: {formatDate(transaction.date || transaction.createdAt)}</p>
+            {transaction.description && (
+                <p className="text-gray-600">Note: {transaction.description}</p>
+            )}
         </div>
     );
 };
 
-export default OrderCard;
+export default TransactionCard;
