@@ -14,22 +14,42 @@ import OrdersPage from './pages/OrdersPage';
 import TransactionsPage from './pages/TransactionsPage';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 const App = () => {
-    // Assuming isAuthenticated is a state variable to track user authentication status
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        console.log("Current Location:", window.location.pathname);
+        // Check for existing token on app load
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsAuthenticated(true);
+        }
+        setLoading(false);
     }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
+        window.location.href = '/';
+    };
+
+    if (loading) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <div className="text-xl">Loading...</div>
+            </div>
+        );
+    }
 
     return (
         <Router>
             <div>
                 {isAuthenticated ? (
-                    // Render components for authenticated users
                     <div className='flex overflow-x-hidden'>
-                        <LeftNav />
+                        <LeftNav onLogout={handleLogout} />
                         <div className='lg:w-[85%]'>
                             <div className='h-screen'>
                                 <Header />
@@ -42,6 +62,7 @@ const App = () => {
                                         <Route path="/orders" element={<OrdersPage />} />
                                         <Route path="/transactions" element={<TransactionsPage />} />
                                         <Route path="/" element={<Navigate to="/dashboard" />} />
+                                        <Route path="*" element={<Navigate to="/dashboard" />} />
                                     </Routes>
                                 </main>
                             </div>
@@ -49,10 +70,11 @@ const App = () => {
                         </div>
                     </div>
                 ) : (
-                    // Render components for guest users
                     <Routes>
                         <Route path="/" element={<LandingPage />} />
-                        <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated}/>} />
+                        <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
+                        <Route path="/register" element={<RegisterPage setIsAuthenticated={setIsAuthenticated} />} />
+                        <Route path="*" element={<Navigate to="/" />} />
                     </Routes>
                 )}
             </div>
