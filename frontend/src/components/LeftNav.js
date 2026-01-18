@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const LeftNav = () => {
+const LeftNav = ({ onLogout }) => {
     const [collapsed, setCollapsed] = useState(false);
     const location = useLocation();
 
@@ -65,6 +65,15 @@ const LeftNav = () => {
                     </li>
                 </ul>
             </nav>
+            <div className="p-4 border-t border-gray-700">
+                <button
+                    onClick={onLogout}
+                    className="w-full p-4 text-left text-black hover:bg-red-600 hover:text-white rounded-xl transition-colors"
+                >
+                    <i className="fa-solid fa-right-from-bracket mr-3"></i>
+                    Logout
+                </button>
+            </div>
         </nav>
     );
 }

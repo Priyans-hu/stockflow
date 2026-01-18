@@ -1,12 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/UserController');
+const { auth, authorize } = require('../middleware/auth');
+const { userValidation, mongoIdValidation } = require('../middleware/validate');
 
-// Routes for users
-router.get('/', userController.getAllUsers);
-router.get('/:id', userController.getUserById);
-router.post('/', userController.createUser);
-router.put('/:id', userController.updateUser);
-router.delete('/:id', userController.deleteUser);
+// Public auth routes
+router.post('/register', userValidation.register, userController.register);
+router.post('/login', userValidation.login, userController.login);
+
+// Protected routes
+router.get('/profile', auth, userController.getProfile);
+router.get('/', auth, authorize('Admin'), userController.getAllUsers);
+router.get('/:id', auth, mongoIdValidation, userController.getUserById);
+router.post('/', auth, authorize('Admin'), userValidation.register, userController.createUser);
+router.put('/:id', auth, mongoIdValidation, userController.updateUser);
+router.delete('/:id', auth, authorize('Admin'), mongoIdValidation, userController.deleteUser);
 
 module.exports = router;

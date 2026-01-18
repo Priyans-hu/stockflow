@@ -1,0 +1,87 @@
+# StockFlow - Cursor IDE Rules
+
+## Project Context
+This is a MERN stack inventory management application with:
+- Backend: Node.js + Express + MongoDB
+- Frontend: React + TailwindCSS
+- Auth: JWT-based authentication
+
+## Code Style
+
+### JavaScript/Node.js
+- Use ES6+ features (const/let, arrow functions, async/await)
+- Use async/await instead of callbacks or .then()
+- Use destructuring for object and array access
+- Prefer template literals for string concatenation
+
+### React
+- Use functional components with hooks
+- Use named exports for components
+- Keep components small and focused
+- Use the api service layer for all API calls
+
+### Naming Conventions
+- Components: PascalCase (ProductCard.js)
+- Functions: camelCase (handleSubmit)
+- Constants: UPPER_SNAKE_CASE
+- Files: camelCase for JS, PascalCase for React components
+
+## File Patterns
+
+### Backend Controller Pattern
+```javascript
+const getSomething = async (req, res) => {
+    try {
+        const data = await Model.find();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+```
+
+### Frontend API Call Pattern
+```javascript
+import { somethingAPI } from '../services/api';
+
+const fetchData = async () => {
+    try {
+        const response = await somethingAPI.getAll();
+        setData(response.data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+```
+
+## Important Notes
+
+- MongoDB uses `_id` not `id` - always use `_id` in frontend
+- All protected routes need Bearer token in Authorization header
+- User roles: Admin > Manager > Staff
+- Validation is done in middleware/validate.js
+- Environment variables in backend/.env
+
+## Do NOT
+- Hardcode credentials or secrets
+- Skip input validation
+- Use callbacks instead of async/await
+- Create components without proper error handling
+- Ignore TypeScript/ESLint warnings
+
+## Testing
+- Backend tests use Jest + mongodb-memory-server
+- Frontend tests use React Testing Library
+- Run `npm test` in respective directories
+
+## Common Commands
+```bash
+# Start backend (from /backend)
+npm run dev
+
+# Start frontend (from /frontend)
+npm start
+
+# Run backend tests
+npm test
+```
