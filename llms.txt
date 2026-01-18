@@ -1,0 +1,96 @@
+# StockFlow
+
+> A modern inventory management system for businesses to track products, orders, and transactions.
+
+## Overview
+
+StockFlow is a full-stack MERN application that provides comprehensive inventory management capabilities. Built with React, Node.js, Express, and MongoDB.
+
+## Key Features
+
+- User authentication with JWT tokens
+- Role-based access control (Admin, Manager, Staff)
+- Product management with categories
+- Order tracking and management
+- Transaction history and analytics
+- Dashboard with key metrics
+- RESTful API architecture
+
+## Tech Stack
+
+- Frontend: React 18, TailwindCSS, Axios, React Router
+- Backend: Node.js 18+, Express.js 4.x
+- Database: MongoDB with Mongoose ODM
+- Auth: JWT with bcryptjs password hashing
+- Validation: express-validator
+- Logging: morgan
+
+## API Endpoints
+
+### Authentication
+- POST /users/register - Create new user account
+- POST /users/login - Authenticate and receive JWT
+
+### Products
+- GET /products - List all products
+- GET /products/:id - Get product by ID
+- POST /products - Create product (Admin/Manager)
+- PUT /products/:id - Update product (Admin/Manager)
+- DELETE /products/:id - Delete product (Admin only)
+
+### Categories
+- GET /categories - List all categories
+- POST /categories - Create category
+- PUT /categories/:id - Update category
+- DELETE /categories/:id - Delete category
+
+### Orders
+- GET /orders - List all orders
+- POST /orders - Create order
+- PUT /orders/:id - Update order
+- DELETE /orders/:id - Delete order
+
+### Transactions
+- GET /transactions - List all transactions
+- GET /transactions/analytics/total-turnover - Get total revenue
+- POST /transactions - Create transaction
+
+### Health
+- GET /health - API health check
+
+## Repository Structure
+
+- /backend - Express.js API server
+- /frontend - React application
+- /backend/models - MongoDB schemas
+- /backend/controllers - Request handlers
+- /backend/routes - API route definitions
+- /frontend/src/pages - React page components
+- /frontend/src/components - Reusable UI components
+- /frontend/src/services - API service layer
+
+## Quick Start
+
+```bash
+# Clone repository
+git clone https://github.com/Priyans-hu/StockFlow.git
+
+# Backend setup
+cd StockFlow/backend
+cp .env.example .env
+npm install
+npm run dev
+
+# Frontend setup
+cd ../frontend
+npm install
+npm start
+```
+
+## Author
+
+Priyanshu Garg - https://github.com/Priyans-hu
+
+## License
+
+MIT License

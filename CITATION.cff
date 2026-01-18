@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "StockFlow"
+abstract: "A modern inventory management system built with the MERN stack for businesses to track products, orders, and transactions."
+authors:
+  - family-names: "Garg"
+    given-names: "Priyanshu"
+repository-code: "https://github.com/Priyans-hu/StockFlow"
+url: "https://github.com/Priyans-hu/StockFlow"
+license: MIT
+keywords:
+  - inventory-management
+  - mern-stack
+  - react
+  - nodejs
+  - express
+  - mongodb
+  - jwt-authentication
+  - dashboard
