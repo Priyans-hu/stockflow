@@ -67,10 +67,63 @@ const deleteTransaction = async (req, res) => {
     }
 };
 
+// Get total turnover (sum of all transaction amounts)
+const getTotalTurnover = async (req, res) => {
+    try {
+        const result = await Transaction.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalTurnover: { $sum: '$totalPrice' },
+                    count: { $sum: 1 },
+                },
+            },
+        ]);
+
+        const totalTurnover = result.length > 0 ? result[0].totalTurnover : 0;
+        const transactionCount = result.length > 0 ? result[0].count : 0;
+
+        res.json({ totalTurnover, transactionCount });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Get dashboard analytics
+const getDashboardAnalytics = async (req, res) => {
+    try {
+        const [turnoverResult, recentTransactions] = await Promise.all([
+            Transaction.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        totalTurnover: { $sum: '$totalPrice' },
+                        count: { $sum: 1 },
+                    },
+                },
+            ]),
+            Transaction.find()
+                .sort({ createdAt: -1 })
+                .limit(5)
+                .populate('user', 'username'),
+        ]);
+
+        res.json({
+            totalTurnover: turnoverResult.length > 0 ? turnoverResult[0].totalTurnover : 0,
+            transactionCount: turnoverResult.length > 0 ? turnoverResult[0].count : 0,
+            recentTransactions,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getAllTransactions,
     getTransactionById,
     createTransaction,
     updateTransaction,
     deleteTransaction,
+    getTotalTurnover,
+    getDashboardAnalytics,
 };

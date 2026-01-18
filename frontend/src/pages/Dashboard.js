@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { productsAPI, ordersAPI, transactionsAPI } from '../services/api';
 
 const Dashboard = () => {
     const [totalProducts, setTotalProducts] = useState(0);
@@ -10,44 +10,27 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch total products
-        axios.get('/products')
-            .then(response => {
-                setTotalProducts(response.data.length);
-            })
-            .catch(error => {
-                console.error('Error fetching total products:', error);
-            });
+        const fetchDashboardData = async () => {
+            try {
+                const [productsRes, ordersRes, turnoverRes, transactionsRes] = await Promise.all([
+                    productsAPI.getAll(),
+                    ordersAPI.getAll(),
+                    transactionsAPI.getTotalTurnover(),
+                    transactionsAPI.getAll(),
+                ]);
 
-        // Fetch total orders
-        axios.get('/orders')
-            .then(response => {
-                setTotalOrders(response.data.length);
-            })
-            .catch(error => {
-                console.error('Error fetching total orders:', error);
-            });
-
-        // Fetch total turnover (sum of all transaction amounts)
-        axios.get('/transactions/total-turnover')
-            .then(response => {
-                setTotalTurnover(response.data.totalTurnover);
-            })
-            .catch(error => {
-                console.error('Error fetching total turnover:', error);
-            });
-
-        // Fetch recent transactions
-        axios.get('/transactions?limit=5') // Assuming API supports fetching recent transactions with a query parameter 'limit'
-            .then(response => {
-                setRecentTransactions(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching recent transactions:', error);
-            })
-            .finally(() => {
+                setTotalProducts(productsRes.data.length);
+                setTotalOrders(ordersRes.data.length);
+                setTotalTurnover(turnoverRes.data.totalTurnover || 0);
+                setRecentTransactions(transactionsRes.data.slice(0, 5));
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            } finally {
                 setLoading(false);
-            });
+            }
+        };
+
+        fetchDashboardData();
     }, []);
 
     return (
@@ -93,9 +76,12 @@ const Dashboard = () => {
                             {loading ? (
                                 <p>Loading...</p>
                             ) : recentTransactions.length > 0 ? (
-                                <ul className="text-gray-600">
+                                <ul className="text-gray-600 space-y-2">
                                     {recentTransactions.map(transaction => (
-                                        <li key={transaction.id}>{transaction.description}</li>
+                                        <li key={transaction._id} className="flex justify-between">
+                                            <span>#{transaction._id?.slice(-6)}</span>
+                                            <span className="font-semibold">₹{transaction.totalPrice?.toFixed(2) || '0.00'}</span>
+                                        </li>
                                     ))}
                                 </ul>
                             ) : (
