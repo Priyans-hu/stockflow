@@ -1,5 +1,9 @@
+require('dotenv').config();
+
 const dbConfig = {
-    dbURL: "mongodb+srv://admin:zve0io3kdUldBAA7@cluster0.j6vjcys.mongodb.net/stockflow",
+    dbURL: process.env.MONGODB_URI || 'mongodb://localhost:27017/stockflow',
+    jwtSecret: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
 };
 
 module.exports = dbConfig;
