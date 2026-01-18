@@ -1,4 +1,65 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/UserModel');
+const { jwtSecret, jwtExpiresIn } = require('../config/config');
+
+// Generate JWT token
+const generateToken = (userId) => {
+    return jwt.sign({ userId }, jwtSecret, { expiresIn: jwtExpiresIn });
+};
+
+// Register new user
+const register = async (req, res) => {
+    try {
+        const { username, password, email, role } = req.body;
+
+        // Check if user already exists
+        const existingUser = await User.findOne({
+            $or: [{ email }, { username }]
+        });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User with this email or username already exists.' });
+        }
+
+        const user = new User({ username, password, email, role });
+        await user.save();
+
+        const token = generateToken(user._id);
+        res.status(201).json({ user, token });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Login user
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required.' });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid email or password.' });
+        }
+
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Invalid email or password.' });
+        }
+
+        const token = generateToken(user._id);
+        res.json({ user, token });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Get current user profile
+const getProfile = async (req, res) => {
+    res.json(req.user);
+};
 
 const getAllUsers = async (req, res) => {
     try {
@@ -61,6 +122,9 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
+    register,
+    login,
+    getProfile,
     getAllUsers,
     getUserById,
     createUser,
