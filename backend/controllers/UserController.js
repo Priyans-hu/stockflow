@@ -14,7 +14,7 @@ const register = async (req, res) => {
 
         // Check if user already exists
         const existingUser = await User.findOne({
-            $or: [{ email }, { username }]
+            $or: [{ email }, { username }],
         });
         if (existingUser) {
             return res.status(400).json({ message: 'User with this email or username already exists.' });
@@ -98,7 +98,7 @@ const updateUser = async (req, res) => {
         const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true, runValidators: true }
+            { new: true, runValidators: true },
         );
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
