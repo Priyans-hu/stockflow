@@ -44,7 +44,7 @@ const updateTransaction = async (req, res) => {
         const updatedTransaction = await Transaction.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true, runValidators: true }
+            { new: true, runValidators: true },
         );
         if (!updatedTransaction) {
             return res.status(404).json({ message: 'Transaction not found' });
